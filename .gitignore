@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Pytest
+.pytest_cache/
+
+# VS Code
+.vscode/
+
+# OS / misc
+.DS_Store
+Thumbs.db
+
+# Archives / datasets / binaries (optional)
+*.zip
+*.pdf
+*.sofa
+
+
+# Node / frontend (if ever added)
+node_modules/
+
+# Logs
+*.log
+
+# Large HRTF dataset artifacts (keep out of git)
+dataset/**/HRTF/
+dataset/**/SYNTHETIC_HRTF/
+dataset/**/3DSCAN/
+
+# Audio / measurement / model artifacts
+*.mat
+*.3dti-hrtf
+
+# Audio files
+*.wav

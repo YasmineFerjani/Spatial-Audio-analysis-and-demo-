@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VASI — Spatial Hearing Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/index.css" />
+<script src="/common-ui.js" defer></script>
+<script src="/index.js" defer></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <div>
+      <div class="logo">V<span>A</span>SI</div>
+      <div class="tagline">Virtual Auditory Space Identification</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:2rem;">
+      <div class="score-strip">
+        <div class="score-block">
+          <div class="val" id="sc-correct">0</div>
+          <div class="lbl">correct</div>
+        </div>
+        <div class="score-block">
+          <div class="val" id="sc-wrong">0</div>
+          <div class="lbl">wrong</div>
+        </div>
+        <div class="score-block acc">
+          <div class="val" id="sc-acc">—</div>
+          <div class="lbl">accuracy</div>
+        </div>
+      </div>
+      <a href="/protocol" class="nav-pill">Protocol test →</a>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main>
+
+    <!-- Status -->
+    <div style="display:flex; align-items:center; gap:1.5rem;">
+      <div class="status-bar">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Ready — press play to begin</span>
+      </div>
+      <div class="wave-deco" id="wave">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- Play button -->
+    <div class="play-section">
+      <button class="play-btn" id="play-btn" onclick="playRound()" aria-label="Play spatialised sound">
+        <div class="play-icon"></div>
+      </button>
+      <div class="play-hint">
+        <strong>Put on headphones</strong> for accurate spatial cues.<br>
+        Press play — a sound will appear from one of<br>
+        the 8 directions. Choose what you heard.
+      </div>
+    </div>
+
+    <!-- Direction grid -->
+    <div class="compass-wrap">
+      <div class="compass-label">Select the direction you heard</div>
+      <div class="dir-grid" id="dir-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="result-panel" id="result-panel">
+      <div class="result-verdict" id="result-verdict"></div>
+      <div class="result-detail" id="result-detail"></div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span>HRTF convolution via pyfar ·</span>
+    <span id="round-count">round 0</span>
+  </footer>
+
+</div>
+</body>
+</html>

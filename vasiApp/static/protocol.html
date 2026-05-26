@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VASI — Protocol Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/protocol.css" />
+
+<script src="/common-ui.js" defer></script>
+<script src="/protocol.js" defer></script>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Header ─────────────────────────────────────────────────────── -->
+<header>
+  <div>
+    <div class="logo">V<span>A</span>SI</div>
+    <div class="tagline">Protocol Test · 40 Trials</div>
+  </div>
+  <nav class="nav-links">
+    <a href="/" class="nav-pill">← Free mode</a>
+    <a href="#docs" class="nav-pill" onclick="scrollToDocs(event)">Protocol &amp; refs</a>
+    <a href="#docs" class="nav-pill active" onclick="scrollToDocs(event)">Documentation ↓</a>
+  </nav>
+</header>
+
+<!-- Progress bar (always visible during test) -->
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-label" id="progress-label">0 / 40 trials</div>
+</div>
+
+<!-- ── Main ────────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Start screen -->
+  <div class="card" id="start-screen">
+    <h2>VASI Protocol Test</h2>
+    <p>
+      This structured test follows the standard VASI protocol: <strong>5 trials per azimuthal location</strong>
+      across <strong>8 directions</strong>, for a total of <strong>40 randomised trials</strong>.
+      After completion, you will receive detailed accuracy statistics broken down by direction,
+      hemisphere, and front/back discrimination.
+    </p>
+    <div class="start-meta">
+      <div class="start-meta-item"><div class="num">40</div><div class="lbl">Total trials</div></div>
+      <div class="start-meta-item"><div class="num">8</div><div class="lbl">Directions</div></div>
+      <div class="start-meta-item"><div class="num">5</div><div class="lbl">Trials / azimuth</div></div>
+    </div>
+    <button class="big-btn" id="start-btn" onclick="startTest()">Begin test</button>
+  </div>
+
+  <!-- Active test area -->
+  <div id="test-area">
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem;">
+        <div class="trial-info">
+          <div class="trial-counter" id="trial-counter">1 <span>/ 40</span></div>
+          <div>
+            <div class="status-bar">
+              <div class="status-dot" id="status-dot"></div>
+              <span id="status-text">Press play to hear the stimulus</span>
+            </div>
+          </div>
+        </div>
+        <div class="wave-deco" id="wave">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="play-section" style="margin-bottom:1.5rem;">
+        <button class="play-btn" id="play-btn" onclick="playTrial()" aria-label="Play">
+          <div class="play-icon"></div>
+        </button>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8;">
+          <strong style="color:var(--text);">Headphones required.</strong><br>
+          Play the stimulus then select the perceived direction.
+        </div>
+      </div>
+
+      <div class="compass-wrap">
+        <div class="compass-label">Select the direction you heard</div>
+        <div class="dir-grid" id="dir-grid"></div>
+      </div>
+    </div>
+
+    <div class="result-flash" id="result-flash">
+      <div class="result-verdict" id="result-verdict"></div>
+      <div class="result-detail"  id="result-detail"></div>
+    </div>
+
+  </div>
+
+  <!-- Stats area -->
+  <div id="stats-area">
+
+    <div class="card">
+      <div class="stats-hero">
+        <div class="big-pct" id="overall-pct">—</div>
+        <div class="big-label">Overall accuracy</div>
+        <div class="trials-done">40 trials completed</div>
+      </div>
+
+      <div class="card-title">Accuracy by direction<small>5 trials each</small></div>
+      <table class="az-table" id="az-table">
+        <thead>
+          <tr>
+            <th>Direction</th>
+            <th class="bar-cell"></th>
+            <th>Correct</th>
+            <th>Accuracy</th>
+          </tr>
+        </thead>
+        <tbody id="az-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Hemisphere &amp; front/back analysis</div>
+      <div class="confusion-grid" id="hemi-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Confusion matrix<small>actual × guessed</small></div>
+      <div style="font-size:13px;color:var(--muted);margin:-6px 0 1rem;line-height:1.6;">
+        Each cell shows the percentage of guesses for that <strong>actual</strong> direction
+        (rows) that were reported as the <strong>guessed</strong> direction (columns).
+      </div>
+      <table class="cm-table" id="cm-table">
+        <thead id="cm-thead"></thead>
+        <tbody id="cm-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="restart-row">
+      <button class="big-btn" onclick="restartTest()">Run again</button>
+    </div>
+
+  </div>
+
+</main>
+
+
+<footer>
+  <span>HRTF convolution via pyfar · binaural rendering</span>
+  <span>VASI Protocol — 40 trials</span>
+</footer>
+
+</div><!-- .app -->
+
+<script>
+</script>
+</body>
+</html>

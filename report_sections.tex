@@ -1,0 +1,336 @@
+% ============================================================
+%  INTRODUCTION
+% ============================================================
+\section{Introduction}
+
+The human auditory system is remarkably adept at extracting spatial information from sound —
+identifying the direction, distance, and movement of sources in three-dimensional space.
+This perceptual capability, known as \textit{sound spatialisation}, has become one of the most
+actively researched and commercially significant frontiers in modern audio engineering.
+As digital experiences grow increasingly immersive, the faithful reproduction of spatial acoustic
+cues through headphones and loudspeakers is no longer a niche pursuit but a mainstream
+requirement spanning entertainment, professional audio, and accessibility.
+
+The commercial momentum behind spatial audio is substantial. The global immersive entertainment
+market is projected to reach \$474 billion by 2030, rising sharply from \$133.6 billion in
+2024~\cite{immersive_market_2024}. This rapid expansion is fuelling demand for spatial audio
+technologies across gaming, music production, and interactive media. Major platforms have already
+responded: Apple Music introduced Spatial Audio in June 2021 and has since offered increased
+royalty rates to incentivise artists to deliver content in immersive formats~\cite{apple_spatial_royalties},
+signalling that spatialised sound is becoming a standard expectation rather than a premium feature.
+
+Consumer adoption mirrors industry investment. A recent survey found that nearly 80\% of
+Generation Z respondents would purchase new headphones specifically for spatial audio
+capabilities, with more than one quarter willing to do so regardless of cost~\cite{genz_survey}.
+These figures underscore a generational shift in how audiences perceive and prioritise
+three-dimensional audio experiences.
+
+The impact is particularly pronounced in two professional communities that stand to benefit most
+from precise, reliable spatialisation: \textbf{competitive gamers} and \textbf{musicians}.
+
+For professional esports athletes and competitive gamers, spatial audio confers measurable
+tactical advantages. Accurate sound localisation enables players to determine the precise
+direction and distance of in-game events — footsteps, projectiles, environmental cues — before
+they are visible on screen. Beyond competitive advantage, spatialised game audio enhances
+atmospheric immersion, sharpens spatial awareness, and can improve accessibility for players
+with visual impairments by providing richer non-visual feedback~\cite{game_audio_benefits}.
+In high-stakes esports environments, where reaction times are measured in milliseconds,
+the fidelity of spatial audio rendering can directly influence performance outcomes.
+
+For musicians, audio engineers, and music producers, the ability to accurately perceive and
+evaluate spatial audio is equally critical. As immersive formats such as Dolby Atmos and
+Sony 360 Reality Audio become production standards, professionals must develop a reliable
+perceptual reference for three-dimensional sound placement. Errors in spatial judgement
+during mixing translate directly into poor listener experiences across playback systems.
+There is therefore a pressing need for standardised, reproducible tools that can measure
+and train an individual's spatial hearing acuity.
+
+This project addresses that need by designing, implementing, and evaluating a web-based
+platform for spatial hearing assessment. The system combines a rigorously designed
+psychoacoustic test protocol with a modern, accessible web application, enabling users
+to quantify their spatialisation perception across key auditory dimensions. By targeting
+both gamers and audio professionals, the platform occupies a unique position at the
+intersection of psychoacoustics, human–computer interaction, and immersive audio technology.
+
+The remainder of this report is structured as follows. Section~\ref{sec:wp2} details the
+synthesis and selection of the spatialisation test protocol (WP2). Section~\ref{sec:wp4}
+describes the architecture and development of the web platform (WP4). Subsequent sections
+present experimental results, discussion, and conclusions.
+
+% ============================================================
+%  WP2 — SYNTHESIS OF AUDIOMETRIC SPATIALISATION TEST
+% ============================================================
+\section{WP2 — Synthesis of the Audiometric Spatialisation Test}
+\label{sec:wp2}
+
+\subsection{Objective}
+
+The objective of WP2 was to identify, select, and implement a scientifically grounded
+protocol for measuring a user's spatial hearing capabilities. The resulting test needed
+to produce meaningful, interpretable key performance indicators (KPIs) while remaining
+practical for participants interacting through a gamified web interface.
+
+\subsection{Bibliographic Research (Task 2.1)}
+
+A systematic review of the psychoacoustics literature was conducted to survey existing
+methods for the objective assessment of sound localisation. Three broad families of
+evaluation methods were identified.
+
+\subsubsection{Interaural Time Difference and Interaural Level Difference Threshold Measurements}
+
+ITD and ILD thresholds are classical measures of binaural hearing sensitivity.
+ITD reflects the difference in arrival time between the two ears; ILD reflects the
+difference in sound pressure level. Threshold estimation via adaptive procedures —
+most commonly the \textit{staircase method} — converges on the smallest detectable
+interaural difference for a given listener.
+
+Although theoretically rigorous, the staircase paradigm was ultimately
+\textbf{excluded} from consideration for this project. A standard two-down one-up
+staircase with a termination criterion of ten reversals requires substantial trial
+counts (typically 60–120 trials per condition), resulting in session durations that
+are incompatible with the casual, engaging character that the gamified web application
+is designed to maintain. Participant fatigue and attrition risk would undermine both
+data quality and user retention. Furthermore, presenting sub-millisecond ITD stimuli
+with the timing precision required by the staircase method imposes strict constraints
+on audio hardware latency that cannot be reliably guaranteed across heterogeneous
+consumer devices.
+
+\subsubsection{Free-Field Localisation Tasks}
+
+Free-field paradigms require participants to identify or reproduce the perceived
+direction of a sound source. While ecologically valid, these tasks demand either
+anechoic chamber conditions or carefully calibrated binaural rendering via
+head-related transfer functions (HRTFs). Reliable HRTF-based spatialisation over
+arbitrary consumer headphones introduces personalisation challenges — individual
+anatomical differences cause significant listener-specific variation — making
+standardised comparisons across participants difficult.
+
+\subsubsection{The VASI Test}
+
+The \textit{Virtual Auditory Space Identification} (VASI) test was selected as the
+reference protocol for this project~\cite{vasi}. The VASI paradigm presents
+participants with spatialised sound stimuli rendered through headphones using
+binaural processing. Participants indicate the perceived location of each stimulus
+from a set of discrete reference positions. The resulting confusion matrix and
+derived metrics — including polar angle error, front–back confusion rate, and
+lateral angle accuracy — provide a compact, multi-dimensional profile of spatial
+hearing performance.
+
+The VASI framework was preferred for the following reasons:
+
+\begin{itemize}
+    \item \textbf{Brevity}: A standard VASI session can be completed in 10–15 minutes,
+    preserving participant engagement within a gamified context.
+    \item \textbf{Richness of KPIs}: The protocol yields simultaneous metrics across
+    elevation, azimuth, and front–back discrimination, capturing the multidimensional
+    nature of spatial hearing in a single session.
+    \item \textbf{Headphone compatibility}: Binaural rendering via generic HRTFs is
+    sufficient for group-level comparisons and individual profiling, without requiring
+    individualised measurement.
+    \item \textbf{Prior validation}: VASI-type paradigms have been validated in
+    peer-reviewed studies on both normal-hearing adults and populations with spatial
+    hearing deficits, providing a normative reference for interpreting individual scores.
+\end{itemize}
+
+\subsection{Selection of Test Protocol and KPIs (Task 2.2)}
+
+Based on the bibliographic review, the VASI protocol was adopted with the following
+adaptations to suit the web deployment context:
+
+\begin{itemize}
+    \item Stimulus positions were drawn from a discrete set of virtual loudspeaker
+    directions spanning the full sphere (front, rear, left, right, upper-front, upper-rear),
+    rendered using open-source binaural impulse response datasets.
+    \item Each trial presents a broadband noise burst (200~ms) spatialised to a randomly
+    selected target direction. The participant selects the perceived direction from a
+    graphical interface representing the spatial positions.
+    \item The following KPIs are extracted from the response matrix:
+    \begin{enumerate}
+        \item \textbf{Lateral angle accuracy} (\%): percentage of trials in which the
+        correct left–right hemisphere is identified.
+        \item \textbf{Polar angle RMSE} (degrees): root mean square error between
+        target and response elevation.
+        \item \textbf{Front–back confusion rate} (\%): proportion of trials in which
+        front and rear positions are exchanged.
+        \item \textbf{Overall localisation score} (\%): composite metric weighting
+        lateral accuracy, polar precision, and front–back discrimination.
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Implementation of the Test Script (Task 2.3)}
+
+A standalone Python test script was developed to validate the stimulus generation pipeline
+and scoring logic prior to web integration. The script is independent of WP1's
+spatialisation engine (which handles real-time rendering); its role is to implement the
+trial sequencing, response collection, and KPI computation logic.
+
+Key implementation decisions include:
+
+\begin{itemize}
+    \item \textbf{Stimulus rendering}: The \texttt{soundfile} and \texttt{numpy} libraries
+    are used to load, window, and convolve the noise bursts with the appropriate binaural
+    room impulse responses (BRIRs).
+    \item \textbf{Randomisation}: Trial order is fully randomised per session using a
+    seeded pseudo-random number generator, ensuring reproducibility during validation.
+    \item \textbf{Response interface}: In the standalone script, responses are collected
+    via a command-line prompt; this interface is replaced by the web frontend in WP4.
+    \item \textbf{KPI computation}: Confusion matrices are constructed using
+    \texttt{scikit-learn}, and RMSE calculations are performed with \texttt{numpy}.
+    Results are serialised to JSON for downstream reporting.
+\end{itemize}
+
+\subsection{Script Testing (Task 2.4)}
+
+The Python script was validated through a combination of unit tests and pilot sessions.
+Unit tests verified correctness of the confusion matrix construction, KPI formulas, and
+edge cases (e.g., all-correct and all-incorrect response patterns). Pilot sessions with
+three participants confirmed that session duration fell within the target range
+(10–15 minutes) and that KPI distributions were plausible relative to published VASI
+norms. Identified issues — primarily related to stimulus level calibration and trial
+ordering artefacts — were corrected prior to integration with the web platform.
+
+% ============================================================
+%  WP4 — DEVELOPMENT OF THE WEB PLATFORM
+% ============================================================
+\section{WP4 — Development of the Web Platform}
+\label{sec:wp4}
+
+\subsection{Objective}
+
+WP4 covers the full-stack design and implementation of the web platform that hosts the
+spatialisation test developed in WP2. The platform makes the test accessible to end users
+— competitive gamers and audio professionals — through a browser-based interface that
+combines scientific rigour with an engaging, gamified user experience.
+
+\subsection{Technology Stack and System Design (Task 4.1)}
+
+\subsubsection{Architectural Overview}
+
+The system follows a decoupled \textbf{client–server architecture} in which a single-page
+application (SPA) frontend communicates with a RESTful backend API over HTTPS. This
+separation of concerns offers several advantages: the frontend can be served as a static
+bundle via a content delivery network (CDN), reducing latency for geographically distributed
+users; the backend remains stateless and horizontally scalable; and the two layers can be
+developed, tested, and deployed independently.
+
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.85\textwidth]{figures/system_architecture.pdf}
+    \caption{High-level system architecture of the spatialisation test platform.}
+    \label{fig:architecture}
+\end{figure}
+
+\subsubsection{Frontend}
+
+\textbf{React} (with TypeScript) was selected as the frontend framework on the following grounds:
+
+\begin{itemize}
+    \item \textbf{Component reusability}: The gamified test interface consists of discrete,
+    reusable components (stimulus player, spatial response selector, progress indicator,
+    results dashboard) that map naturally onto React's component model.
+    \item \textbf{State management}: React's \texttt{useState}/\texttt{useReducer} hooks
+    provide predictable, auditable state transitions across trial phases (idle → playing →
+    awaiting response → feedback), which is essential for maintaining test integrity.
+    \item \textbf{Web Audio API integration}: React's lifecycle model integrates cleanly
+    with the \textit{Web Audio API}, which handles real-time binaural spatialisation of
+    stimuli in the browser without server round-trips, thereby minimising latency.
+    \item \textbf{Ecosystem maturity}: The availability of well-maintained libraries
+    (e.g., \texttt{Howler.js} for audio scheduling, \texttt{Recharts} for results
+    visualisation) reduced development overhead significantly.
+\end{itemize}
+
+\textbf{Tailwind CSS} was chosen for styling due to its utility-first approach, which
+accelerates UI development and enforces visual consistency without requiring a bespoke
+design system.
+
+\subsubsection{Backend}
+
+\textbf{FastAPI} (Python) was selected as the backend framework. The choice is motivated by:
+
+\begin{itemize}
+    \item \textbf{Language consistency}: The test logic developed in WP2 is written in
+    Python; using FastAPI allows the KPI computation module to be imported directly into
+    the API layer without reimplementation.
+    \item \textbf{Automatic documentation}: FastAPI generates OpenAPI-compliant
+    documentation from type annotations, facilitating integration testing and future
+    third-party integrations.
+    \item \textbf{Async support}: FastAPI's native \texttt{async}/\texttt{await} support
+    ensures that I/O-bound operations (database writes, session lookups) do not block
+    the event loop, supporting concurrent test sessions without additional infrastructure.
+\end{itemize}
+
+\textbf{PostgreSQL} was selected as the persistence layer for storing session metadata,
+trial-level response data, and computed KPIs. Its ACID compliance guarantees that partial
+session data cannot corrupt stored results, and its JSON column support allows flexible
+storage of the trial response matrix without sacrificing query capability.
+
+\subsubsection{Deployment}
+
+The frontend is deployed as a static bundle; the backend runs in a containerised
+environment (Docker). This configuration enables consistent behaviour across development
+and production environments and simplifies horizontal scaling if user load increases.
+
+\subsection{Backend API Layer (Task 4.2)}
+
+The API exposes the following primary endpoints:
+
+\begin{itemize}
+    \item \texttt{POST /sessions} — Creates a new test session, returns a session token
+    and the randomised trial sequence.
+    \item \texttt{POST /sessions/\{id\}/responses} — Records the participant's response
+    for a given trial; validates that the trial index is within the session scope and that
+    the response is a valid spatial position identifier.
+    \item \texttt{GET /sessions/\{id\}/results} — Triggers KPI computation (if not already
+    cached) and returns the full results payload including the confusion matrix, per-KPI
+    scores, and a percentile ranking derived from the normalised score distribution.
+    \item \texttt{GET /leaderboard} — Returns an anonymised ranking of top scores,
+    supporting the gamification layer.
+\end{itemize}
+
+Input validation is enforced via \textbf{Pydantic} models at every endpoint, ensuring
+that malformed or out-of-range responses are rejected with informative error messages
+before reaching the business logic layer.
+
+\subsection{Frontend Development (Task 4.3)}
+
+The frontend implements a three-phase user flow:
+
+\begin{enumerate}
+    \item \textbf{Onboarding}: The user is guided through a hardware calibration step
+    (headphone check, volume normalisation via a reference tone) to ensure consistent
+    stimulus presentation conditions.
+    \item \textbf{Test execution}: Trials are presented sequentially. For each trial,
+    the spatialised stimulus is played automatically via the Web Audio API; the user
+    then selects the perceived direction from an interactive sphere visualisation.
+    Real-time progress feedback (trial counter, animated transitions) sustains engagement.
+    \item \textbf{Results presentation}: Upon completion, the user's KPI scores are
+    displayed alongside a percentile ranking and radar chart comparing their performance
+    across spatial dimensions (lateral, elevation, front–back). A leaderboard view
+    provides social comparison, reinforcing the gamification element.
+\end{enumerate}
+
+Accessibility considerations include keyboard navigation for the spatial response
+selector and ARIA labels on all interactive elements, ensuring the platform is usable
+by participants with motor or visual impairments.
+
+\subsection{Testing (Task 4.4)}
+
+Testing was conducted at unit, integration, and end-to-end levels:
+
+\begin{itemize}
+    \item \textbf{Unit tests} (pytest, Vitest): Core functions — KPI computation,
+    response validation, trial randomisation — were tested in isolation with
+    parameterised inputs covering boundary conditions.
+    \item \textbf{Integration tests}: API endpoint behaviour was verified against a
+    test database instance, confirming correct session lifecycle management and
+    result consistency across concurrent requests.
+    \item \textbf{End-to-end tests} (Playwright): Critical user journeys (session
+    creation → trial completion → results display) were automated across Chromium
+    and Firefox to detect rendering and audio scheduling regressions.
+    \item \textbf{Cross-device validation}: The platform was tested on representative
+    desktop and mobile configurations to verify audio playback consistency and layout
+    responsiveness.
+\end{itemize}
+
+All identified defects were resolved prior to the pilot deployment described in the
+results section.
